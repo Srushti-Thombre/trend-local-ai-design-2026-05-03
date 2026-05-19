@@ -37,7 +37,14 @@ function exportToJSON(data) {
 
 // SVG Export (Basic version - we'll improve later)
 function exportToSVG(data) {
-    // For now, simple placeholder. Later we'll convert shapes to real SVG
+    // If SVG was imported, export the imported SVG
+    if (data.svg) {
+        const blob = new Blob([data.svg], { type: 'image/svg+xml' });
+        downloadFile(blob, 'design.svg');
+        return blob;
+    }
+    
+    // Otherwise, create a placeholder
     const svgContent = `<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
         <rect width="100%" height="100%" fill="#f0f0f0"/>
         <text x="50%" y="50%" text-anchor="middle" fill="#666">Your Design Here</text>
@@ -118,4 +125,4 @@ function downloadFile(blob, filename) {
     URL.revokeObjectURL(url);
 }
 
-export { exportTo, importFrom };
+export { importFrom };

@@ -5,118 +5,316 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Local AI Design Tool</title>
   <style>
-    body { font-family: Arial; margin: 20px; }
-    button { padding: 10px 15px; margin: 5px; font-size: 16px; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    /* Navbar */
+    .navbar {
+      background: #1b5e3f;
+      color: white;
+      padding: 16px 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar h1 {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    .content {
+      padding: 40px;
+      text-align: center;
+    }
+
+    .content h2 {
+      color: #1b5e3f;
+      margin-bottom: 8px;
+      font-size: 24px;
+    }
+
+    .content p {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+
+    .file-display {
+      background: #f0f0f0;
+      border: 2px solid #1b5e3f;
+      border-radius: 6px;
+      padding: 16px;
+      margin-bottom: 30px;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .file-display .label {
+      position: absolute;
+      top: -12px;
+      left: 16px;
+      background: white;
+      padding: 0 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #1b5e3f;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .file-display.has-file {
+      position: relative;
+    }
+
+    .file-name {
+      color: #1b5e3f;
+      font-weight: 600;
+      font-size: 16px;
+      word-break: break-all;
+    }
+
+    .file-empty {
+      color: #999;
+      font-style: italic;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    button {
+      flex: 1;
+      min-width: 140px;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: #1b5e3f;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #144d32;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(27, 94, 63, 0.2);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #1b5e3f;
+      border: 2px solid #1b5e3f;
+    }
+
+    .btn-secondary:hover {
+      background: #f5f5f5;
+      transform: translateY(-2px);
+    }
+
+    .file-input-wrapper {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    input[type="file"] {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    input[type="file"]:focus {
+      outline: none;
+      border-color: #1b5e3f;
+    }
+
+    #svgViewer {
+      padding: 20px;
+    }
+
+    #svgViewer svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* Toast Notifications */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: white;
+      color: #333;
+      padding: 16px 20px;
+      border-radius: 6px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      margin-bottom: 12px;
+      min-width: 300px;
+      pointer-events: auto;
+      animation: slideIn 0.3s ease-out;
+      border-left: 4px solid #1b5e3f;
+    }
+
+    .toast.success {
+      border-left-color: #10b981;
+    }
+
+    .toast.error {
+      border-left-color: #ef4444;
+      background: #fef2f2;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+    }
+
+    .toast.removing {
+      animation: slideOut 0.3s ease-out forwards;
+    }
+
+    @media (max-width: 500px) {
+      .container {
+        margin: 20px;
+      }
+
+      .content {
+        padding: 24px;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      .file-input-wrapper {
+        flex-direction: column;
+      }
+
+      .toast {
+        min-width: auto;
+        width: calc(100vw - 40px);
+        right: 20px;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>Local AI Design Tool - Testing</h1>
-  <p>Issue #2 - Multiple File Format Support</p>
-  
-  <hr>
-  
-  <h2>Test File Import / Export</h2>
-  <button onclick="testExport('json')">Export as JSON</button>
-  <button onclick="testExport('svg')">Export as SVG</button>
-  
-  <br><br>
-  
-  <input type="file" id="importFile" accept=".json,.svg" />
-  <button onclick="testImport()">Import Selected File</button>
+  <!-- Navbar -->
+  <div class="navbar">
+    <h1>Local AI Design Tool</h1>
+  </div>
 
-  <pre id="status" style="margin-top: 20px; background: #f0f0f0; padding: 10px;"></pre>
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
 
-    <script>
-    function log(msg) {
-      const status = document.getElementById('status');
-      status.textContent += msg + "\n";
-      status.scrollTop = status.scrollHeight;
-    }
+  <!-- Main Container -->
+  <div class="container">
+    <!-- Import/Export View -->
+    <div id="importExportView" class="content">
+      <h2>Design Manager</h2>
+      <p>Import and export your designs effortlessly</p>
 
-    function downloadFile(blob, filename) {
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    }
+      <!-- Current File Display -->
+      <div id="fileDisplay" class="file-display">
+        <div class="file-empty">No file loaded</div>
+      </div>
 
-    // ====================== TEST EXPORT ======================
-    window.testExport = async function(format) {
-      try {
-        log(`Exporting as ${format.toUpperCase()}...`);
+      <!-- Export Buttons -->
+      <div class="button-group">
+        <button id="exportJson" class="btn-primary">Export JSON</button>
+        <button id="exportSvg" class="btn-primary">Export SVG</button>
+      </div>
 
-        if (format === 'json') {
-          const data = {
-            name: "My Design",
-            created: new Date().toISOString(),
-            width: 800,
-            height: 600,
-            elements: [
-              { type: "text", content: "Hello World" }
-            ]
-          };
+      <!-- Import Section -->
+      <div class="file-input-wrapper">
+        <input type="file" id="importFile" accept=".json,.svg">
+        <button id="importBtn" class="btn-secondary">Import</button>
+      </div>
+    </div>
 
-          const jsonString = JSON.stringify(data, null, 2);
-          const blob = new Blob([jsonString], { type: 'application/json' });
-          downloadFile(blob, 'design.json');
-          
-          log("✅ JSON Exported successfully! Check your Downloads folder");
+    <!-- File Viewer View -->
+    <div id="fileViewerView" class="content" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h2 id="viewerTitle" style="margin: 0;">File Viewer</h2>
+        <button id="clearBtn" class="btn-secondary" style="margin: 0; min-width: auto; padding: 10px 16px;">Clear</button>
+      </div>
 
-        } else if (format === 'svg') {
-          const svgContent = `<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
-            <rect width="100%" height="100%" fill="#f8f9fa"/>
-            <text x="400" y="300" font-size="24" text-anchor="middle" fill="#333">Your Design Here</text>
-          </svg>`;
+      <!-- SVG Viewer -->
+      <div id="svgViewer" style="display: none; margin-bottom: 20px; border: 2px solid #1b5e3f; border-radius: 6px; overflow: auto; max-height: 500px; background: white;">
+      </div>
 
-          const blob = new Blob([svgContent], { type: 'image/svg+xml' });
-          downloadFile(blob, 'design.svg');
-          
-          log("✅ SVG Exported successfully! Check your Downloads folder");
-        }
-      } catch(e) {
-        log(`❌ Export failed: ${e.message}`);
-        console.error(e);
-      }
-    };
+      <!-- JSON Viewer -->
+      <pre id="jsonViewer" style="display: none; background: #f5f5f5; padding: 20px; border-radius: 6px; overflow-x: auto; max-height: 500px; border: 2px solid #1b5e3f; color: #333; font-size: 13px;"></pre>
 
-    // ====================== TEST IMPORT ======================
-    window.testImport = async function() {
-      const fileInput = document.getElementById('importFile');
-      const file = fileInput.files[0];
-      
-      if (!file) {
-        log("❌ Please select a file first");
-        return;
-      }
+      <!-- Export Buttons -->
+      <div class="button-group" style="margin-top: 20px;">
+        <button id="exportJsonFromViewer" class="btn-primary">Export JSON</button>
+        <button id="exportSvgFromViewer" class="btn-primary">Export SVG</button>
+      </div>
+    </div>
+  </div>
 
-      log(`Importing ${file.name}...`);
-
-      try {
-        const text = await file.text();
-        
-        if (file.name.endsWith('.json')) {
-          const data = JSON.parse(text);
-          log("✅ JSON Imported successfully!");
-          console.log("Imported Data:", data);
-        } 
-        else if (file.name.endsWith('.svg')) {
-          log("✅ SVG Imported successfully!");
-          console.log("SVG Content:", text);
-        }
-      } catch(e) {
-        log(`❌ Import failed: ${e.message}`);
-      }
-    };
-
-    // Auto start message
-    window.onload = function() {
-      log("✅ Test page is ready!");
-      log("Try clicking Export JSON / SVG and Import");
-    };
-  </script>
+  <script type="module" src="./index.js"></script>
 </body>
 </html>
