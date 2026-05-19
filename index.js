@@ -11,15 +11,25 @@ class LocalAiDesign {
   }
 
   async init() {
-    await this.design.init()
-    await this.ai.init()
-    await this.ui.init()
+    try {
+      await this.design.init()
+      await this.ai.init()
+      await this.ui.init()
+    } catch (error) {
+      console.error('Initialization error:', error)
+      throw error; // Rethrow the error to prevent silent failures
+    }
   }
 
   async run() {
-    const designData = await this.design.getData()
-    const aiSuggestions = await this.ai.getSuggestions(designData)
-    await this.ui.render(aiSuggestions)
+    try {
+      const designData = await this.design.getData()
+      const aiSuggestions = await this.ai.getSuggestions(designData)
+      await this.ui.render(aiSuggestions)
+    } catch (error) {
+      console.error('Runtime error:', error)
+      throw error; // Rethrow the error to prevent silent failures
+    }
   }
 }
 
