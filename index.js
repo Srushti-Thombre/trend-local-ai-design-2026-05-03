@@ -16,6 +16,7 @@ class LocalAiDesign {
       await this.ui.init()
     } catch (error) {
       console.error('Initialization error:', error)
+      throw error; // Rethrow the error to prevent silent failures
     }
   }
 
@@ -26,6 +27,7 @@ class LocalAiDesign {
       await this.ui.render(aiSuggestions)
     } catch (error) {
       console.error('Runtime error:', error)
+      throw error; // Rethrow the error to prevent silent failures
     }
   }
 }
