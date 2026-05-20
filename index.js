@@ -39,6 +39,7 @@ class Design {
 
   async getData() {
     // Get design data
+    return Promise.resolve(); // Ensure getData() returns a promise
   }
 }
 
@@ -49,6 +50,7 @@ class Ai {
 
   async getSuggestions(data) {
     // Get AI-powered design suggestions
+    return Promise.resolve([]); // Ensure getSuggestions() returns a promise that resolves to an array
   }
 }
 
